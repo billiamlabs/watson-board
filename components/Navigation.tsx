@@ -34,6 +34,14 @@ export default function Navigation() {
       >
         Activity
       </Link>
+      <Link
+        href="/cron"
+        className={`flex-1 md:flex-none px-4 py-3 border-b border-slate-700 transition ${
+          isActive('/cron') ? 'bg-slate-800 text-blue-400' : 'hover:bg-slate-800'
+        }`}
+      >
+        Cron
+      </Link>
     </nav>
   )
 }
