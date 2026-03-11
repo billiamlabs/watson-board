@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react'
 import { supabase, type Project } from '@/lib/supabase'
 import QuickCapture from '@/components/QuickCapture'
+import ProjectDetail from '@/components/ProjectDetail'
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'archived'>('all')
   const [loading, setLoading] = useState(true)
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
   useEffect(() => {
     fetchProjects()
@@ -62,9 +64,10 @@ export default function ProjectsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(project => (
-              <div
+              <button
                 key={project.id}
-                className="rounded-lg border border-slate-700 p-4 transition hover:border-slate-600"
+                onClick={() => setSelectedProject(project)}
+                className="rounded-lg border border-slate-700 p-4 transition hover:border-slate-600 text-left hover:bg-slate-900/50"
                 style={{ borderTopColor: project.color, borderTopWidth: '3px' }}
               >
                 <div className="flex items-start justify-between mb-2">
@@ -82,11 +85,22 @@ export default function ProjectsPage() {
                 <div className="text-xs text-slate-500">
                   Priority: {project.priority_rank}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}
       </div>
+
+      {selectedProject && (
+        <ProjectDetail
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+          onUpdate={(updated) => {
+            setProjects(projects.map(p => p.id === updated.id ? updated : p))
+            setSelectedProject(updated)
+          }}
+        />
+      )}
     </div>
   )
 }
